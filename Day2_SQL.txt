@@ -1,0 +1,271 @@
+-- Day2_SQL
+
+-- create a log table
+create table dbo.Log(
+	LogID int identity(1,1) primary key,
+	InsertedDate datetime,
+	InsertedBy nvarchar(100),
+	UpdatedDate datetime,
+	UpdatedBy nvarchar(100),
+	DeletedDate datetime,
+	DeletedBy nvarchar(100)
+);
+go
+
+-- create AFTER INSERT trigger
+create trigger trg_AfterInsert
+on Production.Location
+after insert
+as
+begin
+	insert into dbo.Log(InsertedDate,InsertedBy)
+	values(GETDATE(),SUSER_SNAME());
+end
+go
+
+-- create AFTER UPDATE trigger
+create trigger trg_AfterUpdate
+on Production.Location
+after update
+as
+begin
+	insert into dbo.Log(UpdatedDate,UpdatedBy)
+	values(GETDATE(),SUSER_SNAME());
+end
+go
+
+-- create AFTER DELETE trigger
+create trigger trg_AfterDelete
+on Production.Location
+after delete
+as
+begin
+	insert into dbo.Log(DeletedDate, DeletedBy)
+	values(GETDATE(),SUSER_SNAME());
+end
+go
+
+
+--altering records to observe changes in dbo.log
+insert into Production.Location(Name,CostRate,Availability)
+values('Adi Sharma',0.00,0.00)
+
+insert into Production.Location(Name,CostRate,Availability)
+values('Anil Kumar',1.00,2.00)
+
+select * from dbo.Log
+
+update Production.Location 
+set CostRate = 5.00 where Name = 'Anil Kumar'
+
+delete from Production.Location
+where Name = 'Adi Sharma'
+
+
+-- new audit table
+create table dbo.CustomerAudit(
+PersonID int,
+StoreID int,
+TerritoryID int,
+AccountNumber varchar(10),
+rowguid uniqueidentifier,
+ModifiedDate datetime,
+InsertedDate datetime,
+InsertedBy nvarchar(100)
+)
+
+-- Instead of insert trigger
+--instead of insert inserts record into audit table and not in the main table
+create trigger trg_InsteadOfInsert
+on Sales.Customer
+instead of insert
+as
+begin
+	insert into dbo.CustomerAudit(PersonID, StoreID, TerritoryID, AccountNumber, rowguid, ModifiedDate, InsertedDate, InsertedBy)
+	Select i.PersonID, i.StoreID,i.TerritoryID, i.AccountNumber, i.rowguid, i.ModifiedDate, Getdate(), SUSER_SNAME()
+	from inserted i
+end
+go
+
+select * from sales.Customer
+
+insert into Sales.Customer(PersonID,StoreID,TerritoryID,rowguid)
+values(1234,5678,1,'3F5AE95E-B87D-4AED-95B4-C3797AFCB74F')
+
+select * from dbo.CustomerAudit where PersonID=1234
+
+
+-- Storage Procedures (functions)
+
+--scalar function
+
+create function CalculateTotalPrice(@ListPrice money, @Weight decimal(8,2))
+returns decimal(8,2)
+as
+begin
+	declare @TotalPrice money
+	set @TotalPrice = @ListPrice * @Weight
+	return @TotalPrice
+end
+
+--using scalar function
+Select ProductID, ListPrice, Weight, dbo.CalculateTotalPrice(ListPrice, Weight) as TotalPrice
+from Production.Product
+
+--Table Function
+
+create function GetPersonByCity(@City nvarchar(30))
+returns Table
+as
+return(
+	select AddressID, AddressLine1, AddressLine2, City
+	from Person.Address
+	where City = @City
+)
+
+-- using table function
+select * from dbo.GetPersonByCity('Berlin')
+
+-- transaction and commit
+begin transaction
+
+	Declare @FromWarehouseID int = 1
+	Declare @ToWarehouseID int = 2
+	Declare @ProductID int = 1
+	Declare @QuantityToTransfer int = 10
+
+	update production.ProductInventory
+	set Quantity = Quantity - @QuantityToTransfer
+	where ProductID = @ProductID and LocationID = @FromWarehouseID
+
+	insert into Production.ProductInventory(ProductID, LocationID, Shelf, Bin, Quantity) 
+	values(@ProductID, @ToWarehouseID, 'A', 1, @QuantityToTransfer)
+commit transaction
+
+Select * from Production.ProductInventory
+
+
+
+
+
+-- store procedure
+
+--1. calculate the total sales amount for a specified customer
+--tables: sales.customer, sales.salesorderheader
+
+CREATE PROCEDURE CalculateAndUpdateSales
+	@CustomerID int,
+	@SalesOrderID int,
+	@NewTaxAmt money
+as
+begin
+
+	Begin Transaction
+
+	Declare @TotalSales money;
+
+	with CustomerSalesCTE as(
+	select 
+		C.CustomerID, 
+		sum(So.TotalDue) as TotalSales
+	from 
+		Sales.Customer C inner join Sales.SalesOrderHeader So 
+	on 
+		C.CustomerID = So.CustomerID
+	group by 
+		C.CustomerID
+	having 
+		C.CustomerID = @CustomerID
+	)select * from CustomerSalesCTE  -- print total sales
+
+--create temp table
+	create table #CustomerSalesTemp(SalesOrderID int, OrderDate Date, TotalDue int)
+
+	insert into #CustomerSalesTemp
+	select 
+		SalesOrderID,
+		OrderDate,
+		TotalDue
+	From
+		Sales.SalesOrderHeader
+	where
+		SalesOrderID = @SalesOrderID
+
+
+-- Update Total Due Field for a specific Sales order
+	update Sales.SalesOrderHeader set TaxAmt = @NewTaxAmt where SalesOrderID = @SalesOrderID
+commit transaction
+end
+go
+
+
+--create log table
+create table dbo.SalesOrderChangeLog(
+	ChangeID int identity(1,1) primary key,
+	SalesOrderID int,
+	OldTaxAmt money,
+	NewTaxAmt money,
+	ChangeDate datetime
+)
+go
+
+
+-- trigger
+create trigger after_update
+on Sales.SalesOrderHeader
+after update
+as
+begin
+	Declare @SalesOrderID int
+	Declare @OldTaxAmt money
+	Declare @NewTaxAmt money
+
+	Select @SalesOrderID = i.SalesOrderID,
+	@OldTaxAmt = d.TaxAmt,
+	@NewTaxAmt = i.TaxAmt
+	from
+	inserted i
+	inner join deleted d
+	on
+	i.SalesOrderID = d.SalesOrderID
+
+	insert into dbo.SalesOrderChangeLog (
+	SalesOrderID,
+	OldTaxAmt,
+	NewTaxAmt,
+	ChangeDate)
+	values(@SalesOrderID, @OldTaxAmt, @NewTaxAmt, Getdate())
+end
+
+
+--calling procedure
+exec CalculateAndUpdateSales @CustomerID = 29825, @SalesOrderID = 43659, @NewTaxAmt = 550
+
+
+--final task
+--tables: production.productinventory, salesorderheader
+
+select * from Production.ProductInventory
+select * from sales.SalesOrderHeader
+select * from sales.SalesOrderDetail
+
+select D.ProductID, sum(D.OrderQty) as Total
+into #temp
+from Sales.SalesOrderDetail D inner join Sales.SalesOrderHeader H
+on H.SalesOrderID = D.SalesOrderID
+where OrderDate between '2011-05-31' and '2013-07-22'
+group by ProductID
+
+select * from #temp
+select * from Production.ProductInventory
+drop table #temp
+with SalesCTE as(
+	select D.ProductID, sum(D.OrderQty) as Total
+	into #temp
+	from Sales.SalesOrderDetail D inner join Sales.SalesOrderHeader H
+	on H.SalesOrderID = D.SalesOrderID
+	where OrderDate between '2011-05-31' and '2012-05-31'
+	group by ProductID
+)update Production.ProductInventory set Quantity = Total from SalesCTE
+
+
