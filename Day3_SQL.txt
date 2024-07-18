@@ -1,0 +1,124 @@
+Create table timedate(log_id int identity(1,1) primary key, startdate date, enddate date)
+
+--scd 0
+insert into timedate values (Getdate(), NULL)
+select * from timedate
+
+--------------------------------------------------------------------------------------------------------------
+
+--before scd 1
+create table emp_data(emp_id int, emp_name nvarchar(100), emp_address nvarchar(100), emp_sal int)
+insert into emp_data values (1, 'ABC', 'XYZ', 10000)
+insert into emp_data values (2, 'DEF', 'KLM', 20000)
+insert into emp_data values (3, 'GHI', 'CDG', 40000)
+
+--scd 1
+
+update emp_data
+set emp_name = 'OMG' where emp_id = 1
+
+-------------------------------------------------------------------------------------------------
+
+--before scd 2
+
+alter table emp_data
+add emp_sk int identity(1,1) primary key, startdate date, enddate date
+
+update emp_data set startdate = '2022-09-01'
+
+Select * from emp_data
+
+--scd 2
+
+insert into emp_data (emp_id, emp_name, emp_address, emp_sal, startdate, enddate) values
+(1, 'OMG', 'CDG', 20000, GETDATE(), NULL)
+
+update emp_data set enddate = GETDATE() where emp_id = 1 and enddate is NULL
+
+------------------------------------------------------------------------------------------------
+
+--before scd 3
+create table new_emp_data(emp_id int, emp_name nvarchar(100))
+
+insert into new_emp_data values (1, 'ABC')
+insert into new_emp_data values (2, 'DEF')
+insert into new_emp_data values (3, 'GHI')
+
+-- scd 3
+
+Alter table new_emp_data
+add PrevName nvarchar(100)
+
+select * from new_emp_data
+
+update new_emp_data set PrevName = emp_name, emp_name = 'OMG' where emp_id = 1
+
+---------------------------------------------------------------------------------------------
+
+select * from timedate
+--cdc
+exec sys.sp_cdc_enable_db
+
+exec sys.sp_cdc_enable_table
+	@source_schema = N'dbo',
+	@source_name = N'timedate',
+	@role_name = NULL
+
+select * from cdc.dbo_timedate_CT
+select * from timedate
+
+insert into timedate (startdate, enddate) values (GETDATE(),NULL)
+delete from timedate where log_id = 3
+
+----------------------------------------------------------------------------
+
+--casting
+select * from Person.EmailAddress
+
+select BusinessEntityID, EmailAddress, cast(ModifiedDate as date) as newdate
+from Person.EmailAddress
+
+-- regex
+select BusinessEntityID, EmailAddress
+from Person.EmailAddress
+where EmailAddress like '%@adventure-works.com'
+order by BusinessEntityID
+
+---------------------------------------------------------------------------------------------
+
+create table #temp(emp_id int, emp_name nvarchar(100), PrevName nvarchar(100))
+
+insert into #temp values(1,'OMG','ABC')
+insert into #temp values(2,'XYZ',NULL)
+insert into #temp values(4,'NEW','OLD')
+
+select * from new_emp_data
+select* from #temp
+
+--merge
+
+merge new_emp_data as target
+using #temp as source
+on (target.emp_id = source.emp_id)
+
+when matched and(target.emp_name <> source.emp_name)
+then update set target.emp_name = source.emp_name
+
+when not matched by target
+then insert(emp_id,emp_name,PrevName) values (source.emp_id, source.emp_name,source.PrevName);
+
+alter table new_emp_data
+add IsCurrent binary 
+update new_emp_data
+set IsCurrent =1
+
+update new_emp_data
+set IsCurrent = 0 
+where emp_id in (
+	select emp_id
+	from new_emp_data
+	where IsCurrent = 1)
+and emp_id not in(
+	select emp_id
+	from #temp);
+
