@@ -1,0 +1,183 @@
+PANDAS
+
+Extracting and displaying data
+import pandas
+mydataset = {
+  'cars': ["BMW", "Volvo", "Ford"],
+  'passings': [3, 7, 2]
+}
+myvar = pandas.DataFrame(mydataset)
+print(myvar)
+
+Creating Series and Custom Labels
+import pandas as pd
+a = [1, 7, 2]
+myvar = pd.Series(a, index = ["x", "y", "z"])
+print(myvar)
+
+Reading and displaying top and bottom 5 contents of CSV file
+import pandas as pd
+df = pd.read_csv('data.csv')
+print(df.head())
+Print(df.tail())
+
+To get information of the dataframe
+print(df.info())  
+
+Dropna() function to remove the records having at least one null value
+import pandas as pd
+df = pd.read_csv('data.csv')
+new_df = df.dropna()
+print(new_df.to_string())
+
+To replace any null value with a certain value
+import pandas as pd
+df = pd.read_csv('data.csv')
+df.fillna(130, inplace = True)
+
+To replace null values in a particular field/column
+import pandas as pd
+df = pd.read_csv('data.csv')
+df["Calories"].fillna(130, inplace = True)
+
+
+
+
+
+Using mean() function to replace null values with the average value
+import pandas as pd
+df = pd.read_csv('data.csv')
+x = df["Calories"].mean()
+df["Calories"].fillna(x, inplace = True)
+Formatting dates
+import pandas as pd
+df = pd.read_csv('data.csv')
+df['Date'] = pd.to_datetime(df['Date'])
+print(df.to_string())
+
+Replacing a particular value mentioning row and column
+df.loc[7, 'Duration'] = 45
+
+Removing records for a condition
+for x in df.index:
+  if df.loc[x, "Duration"] > 120:
+    df.drop(x, inplace = True)
+
+Remove duplicates
+df.drop_duplicates(inplace = True)
+
+
+
+PYPLOT
+
+Plotting a line graph
+import matplotlib.pyplot as plt
+import numpy as np
+xpoints = np.array([0, 6])
+ypoints = np.array([0, 250])
+plt.plot(xpoints, ypoints)
+plt.show()
+
+Plotting line graph with dots at each vertex without x coordinates and adding labels and title
+import matplotlib.pyplot as plt
+import numpy as np
+ypoints = np.array([3, 8, 1, 10, 5, 7])
+plt.plot(ypoints, marker = ‘o’)
+plt.title("Sports Watch Data")
+plt.xlabel("Average Pulse")
+plt.ylabel("Calorie Burnage")
+plt.show()
+
+Line graph with a linestyle, color and linewidth
+plt.plot(ypoints, linestyle = 'dashed', color = 'r', linewidth = '20.5',)
+
+
+Plotting multiple lines in one graph with grids
+import matplotlib.pyplot as plt
+import numpy as np
+x1 = np.array([0, 1, 2, 3])
+y1 = np.array([3, 8, 1, 10])
+x2 = np.array([0, 1, 2, 3])
+y2 = np.array([6, 2, 7, 11])
+plt.plot(x1, y1, x2, y2)
+plt.grid(color = 'green', linestyle = '--', linewidth = 0.5)
+plt.show()
+
+Displaying six different graphs in one screen(subplot)
+import matplotlib.pyplot as plt
+import numpy as np
+x = np.array([0, 1, 2, 3])
+y = np.array([3, 8, 1, 10])
+plt.subplot(2, 3, 1)
+plt.plot(x,y)
+
+x = np.array([0, 1, 2, 3])
+y = np.array([10, 20, 30, 40])
+plt.subplot(2, 3, 2)
+plt.plot(x,y)
+
+x = np.array([0, 1, 2, 3])
+y = np.array([3, 8, 1, 10])
+plt.subplot(2, 3, 3)
+plt.plot(x,y)
+
+x = np.array([0, 1, 2, 3])
+y = np.array([10, 20, 30, 40])
+plt.subplot(2, 3, 4)
+plt.plot(x,y)
+
+x = np.array([0, 1, 2, 3])
+y = np.array([3, 8, 1, 10])
+plt.subplot(2, 3, 5)
+plt.plot(x,y)
+
+x = np.array([0, 1, 2, 3])
+y = np.array([10, 20, 30, 40])
+plt.subplot(2, 3, 6)
+plt.plot(x,y)
+plt.show()
+Scatter Plot
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.array([5,7,8,7,2,17,2,9,4,11,12,9,6])
+y = np.array([99,86,87,88,111,86,103,87,94,78,77,85,86])
+plt.scatter(x, y)
+
+x = np.array([2,2,8,1,15,8,12,9,7,3,11,4,7,14,12])
+y = np.array([100,105,84,105,90,99,90,95,94,100,79,112,91,80,85])
+plt.scatter(x, y)
+plt.show()
+
+Bar plot
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.array(["A", "B", "C", "D"])
+y = np.array([3, 8, 1, 10])
+
+plt.bar(x, y, width = 0.1)
+plt.show()
+
+Histogram plot
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.random.normal(170, 10, 250)
+
+plt.hist(x)
+plt.show()
+
+Pie plot
+import matplotlib.pyplot as plt
+import numpy as np
+
+y = np.array([35, 25, 25, 15])
+mylabels = ["Apples", "Bananas", "Cherries", "Dates"]
+myexplode = [0.2, 0, 0, 0]
+
+plt.pie(y, labels = mylabels, explode = myexplode, shadow = True)
+plt.show()
+
+
+

@@ -1,0 +1,359 @@
+1. List Comprehensions
+a. Write a list comprehension that generates a list of squares of the numbers from 1 to 10.
+Squares = [x**2 for x in range(1,11)]
+Print(Squares)
+ -------------------------------------------------------------------------------------------------------------------
+b. Write a list comprehension to extract all the vowels from the string "hello world".
+vowels = [char for char in "hello world" if char in "aeiou"]
+print(vowels)
+====================================================================
+2. Dictionary Comprehension
+a. Create a dictionary where the keys are numbers from 1 to 5 and the values are the cubes of the keys.
+cubes = {x:x**3 for x in range(1,6)}
+print(cubes)
+--------------------------------------------------------------------------------------------------------------------
+b. Create a dictionary where the keys are the ϐirst letters of the words in the list ["apple", "banana", "cherry"] and the values are the words themselves
+fruits = ["apple", "banana", "cherry"]
+first_letter = {fruit[0]: fruit for fruit in fruits}
+print(first_letter)
+====================================================================
+3. Lambda Functions
+a. Write a lambda function that adds 10 to a given number and use it to add 10 to the number 5.
+add = lambda x:x+10
+print(add(5))
+--------------------------------------------------------------------------------------------------------------------
+b. Write a lambda function that checks if a number is even and use it to test the number 4.
+iseven = lambda x:x%2 == 0
+print(iseven(4))
+====================================================================
+4. Filter Function
+a. Use the filter function to filter out the odd numbers from the list [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
+numbers = [1,2,3,4,5,6,7,8,9,10]
+isodd = list(filter(lambda x:x%2!=0,numbers))
+print(isodd)
+--------------------------------------------------------------------------------------------------------------------
+b. Use the filter function to remove all strings shorter than 4 characters from the list ["cat", "dog", "elephant", "rat"].
+animals = ['cat','dog','elephant','rat']
+smallfilter = list(filter(lambda x:len(x)>3,animals))
+print(smallfilter)
+====================================================================
+5. Map Function
+a. Use the map function to double all the numbers in the list [1, 2, 3, 4, 5].
+numbers = [1,2,3,4,5]
+doubles = list(map(lambda x:x*2,numbers))
+print(doubles)
+--------------------------------------------------------------------------------------------------------------------
+b. Use the map function to convert a list of integers [1, 2, 3] to their corresponding string representations.
+numbers = [1,2,3]
+strings = list(map(lambda x:str(x),numbers))
+print(strings)
+====================================================================
+6. Reduce Function
+a. Use the reduce function to find the product of the numbers in the list [1, 2, 3, 4, 5].
+import functools
+numbers = [1,2,3,4,5]
+product = functools.reduce(lambda x,y:x*y,numbers)
+print(product)
+ -------------------------------------------------------------------------------------------------------------------
+b. Use the reduce function to concatenate a list of strings ["Hello", "World", "from", "Python"] into a single string.
+strings = ["Hello", "World", "from", "Python"] 
+concat = functools.reduce(lambda x,y:x+y,strings)
+print(concat)
+====================================================================
+7. Generator Functions
+a. Create a generator function that yields the first 5 even numbers.
+def EvenGenerator():
+    num = 1
+    count = 0
+    while count < 5:
+        if num % 2 == 0:
+            yield num
+            count += 1
+        num += 1
+        
+for i in EvenGenerator():
+    print(i)
+--------------------------------------------------------------------------------------------------------------------
+b. Create a generator function that yields numbers in the Fibonacci sequence up to the 10th number.
+def FibonacciGenerator():
+    num1 = 0
+    num2 = 1
+    yield num1
+    yield num2
+    count = 2
+    while count < 10:
+        result = num1 + num2
+        yield result
+        count += 1
+        num1 = num2
+        num2 = result
+        
+for i in FibonacciGenerator():
+    print(i)
+====================================================================
+8. Handling Exceptions
+a. Write a function that takes two numbers and returns their division, handling the division by zero exception.
+def Division(a, b):
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        result = float('inf')  # handle division by zero
+    return result
+ -------------------------------------------------------------------------------------------------------------------
+b. Write a function that reads a file and handles the file not found exception.
+def ReadFile(Filename):
+    try:
+        with open(Filename, 'r') as file:
+            content = file.read()
+    except FileNotFoundError:
+        content = "File not found"
+    return content
+====================================================================
+10. Regular Expressions
+a. Use regular expressions to find all the words starting with 'a' in the string "apple and banana are amazing".
+import re
+text = "apple and banana are amazing"
+word = text.split(' ')
+for i in word:
+    if re.findall('^a',i) != []:
+        print(i)
+ -------------------------------------------------------------------------------------------------------------------
+b. Use regular expressions to extract all the email addresses from the string "contact us at email@example.com or admin@site.org".
+import re
+mail = "contact us at email@example.com or admin@site.org"
+words = mail.split(' ')
+for i in words:
+    if re.findall('.@.',i) != []:
+        print(i)
+====================================================================
+11. Classes and Objects
+a. Create a class Person with attributes name and age. Instantiate an object of this class and print its attributes.
+class Person:
+    def __init__(self,name,age):
+        self.name = name
+        self.age = age
+        
+p1 = Person('Aman',24)
+print(f'{p1.name}, {p1.age}')
+--------------------------------------------------------------------------------------------------------------------
+b. Create a class Car with attributes make, model, and year. Instantiate an object of this class and print its attributes.
+class Car:
+    def __init__(self,make,model,year):
+        self.make = make
+        self.model = model
+        self . year = year
+        
+c1 = Car('Aluminium','S1',2024)
+print(f'{c1.make}, {c1.model}, {c1.year}')
+====================================================================
+12. Inheritance
+a. Create a class Employee that inherits from the Person class and adds an attribute salary. Instantiate an object of Employee and print all its attributes.  
+#include person class before running the code snippet  
+class Employee(Person):
+    def __init__(self,name,age,salary):
+        self.salary = salary
+        Person.__init__(self,name,age)
+        
+e1 = Employee('Rahul',24,25000)
+print(f'{e1.name}, {e1.age}, {e1.salary}')
+ -------------------------------------------------------------------------------------------------------------------
+b. Create a class Manager that inherits from Employee and adds an attribute department. Instantiate an object of Manager and print all its attributes.
+#include person and employee class before running the code snippet
+class Manager(Employee):
+    def __init__(self,name,age,salary,department):
+        self.department = department
+        Employee.__init__(self,name,age,salary)
+        
+m1 = Manager('Ravi',24,100000,'Technical')
+print(f'{m1.name}, {m1.age}, {m1.salary}, {m1.department}')
+====================================================================
+13. Static Methods
+a. Add a static method to the Person class that returns a greeting message.
+class Person: 
+    def __init__(self,name,age): 
+        self.name = name 
+        self.age = age 
+        
+    @staticmethod
+    def greet():
+        return "Hello!"
+--------------------------------------------------------------------------------------------------------------------
+b. Add a static method to the MathUtils class that returns the square of a given number.
+class MathUtils:
+    @staticmethod
+    def square(x):
+        return x ** 2
+print(MathUtils.square(2))
+====================================================================
+
+
+14. Class Methods
+a. Add a class method to the Person class that returns a new instance of Person with a default name and age.
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+ 
+    @classmethod
+    def Default(cls):
+        return cls("Default", 0)
+ 
+default_person = Person.Default()
+print(default_person.name, default_person.age)
+ -------------------------------------------------------------------------------------------------------------------
+b. Add a class method to the Book class that creates a new Book instance from a given title and author.
+class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+ 
+    @classmethod
+    def instance(cls, title, author):
+        return cls(title, author)
+ 
+book = Book.instance("Java Programming ", "Balaguruswamy")
+print(book.title, book.author)
+====================================================================
+15. Magic Methods
+a. Override the __str__ method in the Person class to return a formatted string.
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age  
+    def __str__(self):
+        return f"Person: {self.name}, Age: {self.age}"
+ 
+p1 = Person("Anil", 24)
+print(p1)       
+------------------------------------------------------------------------------------------------------------------- 
+b. Override the __add__ method in a Vector class to add two vectors together
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+ 
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y)
+v1 = Vector(1, 3)
+v2 = Vector(2, 4)
+result = v1 + v2
+print(result.x, result.y)
+====================================================================
+
+
+
+16. Context Managers
+a. Create a context manager that prints "Entering" when entering the context and "Exiting" when exiting the context.
+class MyContextManager:
+    def __enter__(self):
+        print("Entering")
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print("Exiting")
+with MyContextManager():
+    print("Inside the context")
+--------------------------------------------------------------------------------------------------------------------
+b. Create a context manager that temporarily changes the current working directory and restores it back when exiting the context.
+import os
+class ChangeDirContext:
+    def __init__(self, new_dir):
+        self.new_dir = new_dir
+        self.saved_dir = None
+ 
+    def __enter__(self):
+        self.saved_dir = os.getcwd()
+        os.chdir(self.new_dir)
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        os.chdir(self.saved_dir)
+====================================================================
+17. Iterators
+a. Create a custom iterator that returns numbers from 1 to 5.
+class NumIterator:
+    def __init__(self):
+        self.current = 0
+ 
+    def __iter__(self):
+        return self
+ 
+    def __next__(self):
+        self.current += 1
+        if self.current > 5:
+            raise StopIteration
+        return self.current
+ 
+numbers = NumIterator()
+for num in numbers:
+    print(num)
+--------------------------------------------------------------------------------------------------------------------
+b. Create a custom iterator that returns the characters in a string one by one.
+class StringIter:
+    def __init__(self, text):
+        self.text = text
+        self.index = 0
+ 
+    def __iter__(self):
+        return self
+ 
+    def __next__(self):
+        if self.index >= len(self.text):
+            raise StopIteration
+        result = self.text[self.index]
+        self.index += 1
+        return result
+ 
+text_iter = StringIter("Hello")
+for char in text_iter:
+    print(char)
+============================================================================
+18. Modules and Packages 
+a. Create a simple module my_module.py with a function greet that prints "Hello, World!". Import and use this function in another script. 
+#in my_module.py
+def greeting():
+    Print(“Hello, World!”)
+
+#in main.py
+import my_module
+my_module.greeting()
+--------------------------------------------------------------------------------------------------------------------
+b. Create a package my_package with a module utils.py that contains a function square that returns the square of a number. Import and use this function in another script.
+#create a directory named my_package, save utils.py in that folder
+#in utils.py
+def square(n):
+    return n**2
+#in main.py
+from my_package import utils
+utils.square(4)
+============================================================================
+19. Date and Time 
+a. Write a program that gets the current date and time and prints it in the format "YYYYMM-DD HH:MM". 
+from datetime import datetime 
+now = datetime.now() 
+formatted_now = now.strftime("%Y-%m-%d %H:%M") 
+print(formatted_now)
+--------------------------------------------------------------------------------------------------------------------
+b. Write a program that calculates the number of days between two given dates
+from datetime import datetime
+date_str1 = "2023-01-01"
+date_str2 = "2023-12-31"
+ 
+date1 = datetime.strptime(date_str1, "%Y-%m-%d")
+date2 = datetime.strptime(date_str2, "%Y-%m-%d")
+ 
+delta = date2 - date1
+print(delta.days)
+============================================================================
+20. Collections
+a. Use the collections.Counter class to count the occurrences of each character in the string
+"abracadabra".
+from collections import Counter
+text = "abracadabra"
+char_count = Counter(text)
+print(char_count)
+--------------------------------------------------------------------------------------------------------------------
+b. Use the collections.defaultdict class to create a dictionary that returns a default value of 0 for any new keys.
+from collections import defaultdict
+default_dictionary = defaultdict(int)
+default_dictionary['a'] = 1
+print(default_dictionary['a'])  
+print(default_dictionary['b'])
