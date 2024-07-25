@@ -1,0 +1,1085 @@
+1. Data Manipulation with Pandas: 
+⦁	Given a dataset in the form of a dictionary, convert it to a DataFrame and perform the following tasks: 
+⦁	Remove rows with missing values. 
+import pandas as pd
+# Example dataset in the form of a dictionary
+data = {
+    'Product':['Car','Car','Bike','Car','Bus'], 
+    'Month':['Jan','Feb','Jan','Jan','Mar'],
+    'Sales':[500000,500000,200000,500000,1500000]
+}
+df = pd.DataFrame(data)
+print(df)
+print('\n')
+
+⦁	Group the data by 'Product' and calculate the total sales for each product.
+ndf = df.groupby('Product').sum()
+ndf = ndf.drop('Month',axis = 1)
+print(ndf)
+print('\n')
+
+⦁	Sort the results by total sales in descending order.
+print(ndf.sort_values(by = ['Sales'],ascending = False))
+print('\n')
+
+⦁	Create a pivot table that shows the sum of sales for each product, broken down by month.
+import pandas as pd
+# Example dataset in the form of a dictionary
+data = {
+    'Product': ['A', 'B', 'A', 'B', 'A'],
+    'Sales': [100, 150, 200, 300, 250],
+    'Month': ['Jan', 'Feb', 'Jan', 'Feb', 'Mar']
+}
+ 
+df = pd.DataFrame(data)
+print("Initial DataFrame:")
+print(df)
+ 
+# Create pivot table to show sum of sales by product and month
+pivot_table = pd.pivot_table(df, values='Sales', index='Product', columns='Month', aggfunc='sum')
+ 
+print("\nPivot table showing sum of sales for each product, broken down by month:")
+print(pivot_table)
+
+2. Data Cleaning:  
+⦁	Write a function that takes a DataFrame with various types of data (numeric, text, dates) and performs the following cleaning steps: 
+⦁	Replace all empty strings with NaN. 
+import pandas as pd
+Import numpy as np
+def ReplaceNaN(column):
+    column = column.fillna(np.nan)
+    return column
+
+⦁	Fill numeric NaNs with the mean of their column. 
+import pandas as pd
+def ReplaceMean(column):
+    mean = column.mean()
+    column.fillna(mean)
+    return column
+
+⦁	Convert all text to lowercase.
+df = df.applymap(lambda x: x.lower() if isinstance(x, str) else x)
+
+⦁	Write a function that detects and removes outliers from a numeric column in a DataFrame using the IQR method. 
+import pandas as pd
+
+def remove_outliers_iqr(df, column):
+    
+    Q1 = df[column].quantile(0.25)
+    Q3 = df[column].quantile(0.75)
+    IQR = Q3 - Q1
+
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    filtered_df = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
+    return filtered_df
+3. Lambda Functions and Map-Reduce: 
+⦁	Use a lambda function to filter out even numbers from a list of integers. 
+arr = [x for x in range(1,11)]
+EvenFilter = list(filter(lambda x:x%2==0))
+print(EvenFilter)
+
+⦁	Use the reduce function to calculate the product of the remaining numbers. 
+import functools
+product = functools.reduce(lambda x,y:x*y,EvenFilter)
+⦁	Use a lambda function with the filter function to remove words from a list that are shorter than 4 characters. Then, use reduce to concatenate the remaining words into a single string. 
+strings = ["Hello", "World", "from", "Python"] 
+concat = functools.reduce(lambda x,y:x+y,strings)
+print(concat)
+
+4. Data Visualization:  
+⦁	Using Matplotlib, create a line chart showing the trend of sales over time from the given dataset.
+import matplotlib.pyplot as plt
+time = [2020,2021,2022,2023,2024]
+sales = [500,1000,750,2000,900]
+plt.plot(time,sales)
+plt.show()
+ 
+
+⦁	Customize the chart with labels, title, and legend. 
+plt.title(' Sales Trend ')
+plt.xlabel(' Year ')
+plt.ylabel(' Sales ')
+plt.show()
+ 
+⦁	Create a scatter plot showing the relationship between two numerical columns in a DataFrame. Add a trend line to the scatter plot. 
+import pandas as pd 
+import matplotlib.pyplot as plt 
+data = {  
+    'time' : [2020,2021,2022,2023,2024], 
+    'sales' : [500,1000,750,2000,900] 
+} 
+df = pd.DataFrame(data) 
+df.plot(kind = 'scatter',x = 'time', y = 'sales') 
+df.plot(kind = 'line',x = 'time', y = 'sales') 
+plt.show()
+  
+5. Data Aggregation: 
+⦁	Given a list of dictionaries representing transactions, write a function to aggregate the total amount spent by each user. 
+def agg(dict):
+    sum = 0
+    for i in dict:
+        sum += dict[i]
+    return sum
+print(agg({1:2,2:4,3:6}))
+
+⦁	Write a function that calculates the moving average of the total amount spent by each user over a specified window size.  
+from collections import defaultdict
+from collections import deque
+def moving_average(transactions, window_size):
+    user_totals = defaultdict(list)
+    user_queues = defaultdict(deque)
+    user_averages = defaultdict(list)
+    
+    for transaction in transactions:
+        user_id = transaction['user_id']
+        amount = transaction['amount']
+        
+        user_queues[user_id].append(amount)
+        if len(user_queues[user_id]) > window_size:
+            user_queues[user_id].popleft()
+        
+        user_totals[user_id].append(sum(user_queues[user_id]) / len(user_queues[user_id]))
+    
+    return user_totals
+
+6. Exception Handling: 
+⦁	Write a function that handles division by zero and returns a meaningful error message when a division by zero occurs. 
+def Division(a, b):
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        result = float('inf')  # handle division by zero
+    return result
+
+⦁	Write a function that takes a list of file paths and attempts to open each one, handling FileNotFoundError, PermissionError, and IOError, and logging the results. 
+def ReadFile(Filename):
+
+    try:
+        with open(Filename, 'r') as file:
+            content = file.read()
+
+    except FileNotFoundError:
+        content = "File not found"
+
+    except PermissionError:
+        content = "Access Denied"
+
+    except IOError:
+        content = "I/O not found"
+
+    return content
+
+7. Working with Dates: 
+⦁	Write a function that takes a list of date strings in various formats and converts them to a standardized format (YYYY-MM-DD). 
+
+from datetime import datetime
+ 
+def standardize_dates(date_list):
+    standardized_dates = []
+    for date_str in date_list:
+        for fmt in ("%Y-%m-%d", "%d-%m-%Y", "%m/%d/%Y", "%d/%m/%Y", "%Y/%m/%d", "%b %d, %Y", "%d %b %Y"):
+
+            try:
+                standardized_date = datetime.strptime(date_str, fmt).strftime("%Y-%m-%d")
+                standardized_dates.append(standardized_date)
+                break
+
+            except ValueError:
+                continue
+        else:
+            standardized_dates.append("Invalid date format")
+
+    return standardized_dates
+ 
+⦁	Write a function that calculates the number of business days between two given dates, excluding weekends and holidays. 
+
+from datetime import datetime, timedelta
+ 
+def business_days(start_date, end_date, holidays):
+    # Convert string dates to datetime objects
+    start_date = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    
+    # Initialize the count of business days
+    business_days_count = 0
+    
+    # Iterate through each day in the date range
+    current_date = start_date
+    while current_date <= end_date:
+        # Check if the current day is a weekday and not a holiday
+        if current_date.weekday() < 5 and current_date not in holidays:
+            business_days_count += 1
+        current_date += timedelta(days=1)
+    
+    return business_days_count
+
+
+
+
+
+
+
+
+
+
+8. ETL Process: 
+⦁	Simulate an ETL process using Python that extracts data from a list of dictionaries, transforms it by normalizing numeric fields, and loads it into a Pandas DataFrame.
+import pandas as pd
+
+from sklearn.preprocessing import MinMaxScaler
+ 
+# Sample data: list of dictionaries
+data = [
+    {'name': 'Alice', 'age': 25, 'salary': 50000},
+    {'name': 'Bob', 'age': 30, 'salary': 60000},
+    {'name': 'Charlie', 'age': 35, 'salary': 70000},
+    {'name': 'David', 'age': 40, 'salary': 80000},
+    {'name': 'Eve', 'age': 45, 'salary': 90000}
+]
+
+# Extract phase
+df = pd.DataFrame(data)
+# Transform phase
+scaler = MinMaxScaler()
+df[['age', 'salary']] = scaler.fit_transform(df[['age', 'salary']])
+# Load phase
+print(df)
+
+⦁	Extend the ETL process to include a validation step that checks for data quality issues (e.g., missing values, outliers) before loading the data into the DataFrame. 
+
+import pandas as pd
+ 
+# Sample data extraction function
+def extract_data():
+    # Replace with your data extraction logic
+    data = {
+        'column1': [1, 2, None, 4, 5],
+        'column2': [10, 20, 30, 40, 50],
+        'column3': [100, 200, 300, 400, None]
+    }
+    return pd.DataFrame(data)
+ 
+# Data validation function
+def validate_data(df):
+    # Check for missing values
+    missing_values = df.isnull().sum()
+    print("Missing values in each column:\n", missing_values)
+    
+    # Check for outliers using Z-score
+    from scipy.stats import zscore
+    z_scores = df.apply(zscore)
+    outliers = (z_scores.abs() > 3).sum()
+    print("Outliers in each column:\n", outliers)
+    
+    # Additional validation checks can be added here
+    return missing_values, outliers
+ 
+# Sample data transformation function
+def transform_data(df):
+    # Replace missing values with a placeholder (e.g., mean of the column)
+    df.fillna(df.mean(), inplace=True)
+    return df
+ 
+# Sample data loading function
+def load_data(df):
+    # Replace with your data loading logic
+    print("Data loaded successfully:\n", df)
+ 
+# ETL process
+def etl_process():
+    # Extract
+    df = extract_data()
+    print("Extracted Data:\n", df)
+    
+    # Validate
+    missing_values, outliers = validate_data(df)
+    # If data is valid, proceed to transform and load
+    if missing_values.sum() == 0 and outliers.sum() == 0:
+        # Transform
+        df = transform_data(df)
+        print("Transformed Data:\n", df)
+        
+        # Load
+        load_data(df)
+    else:
+        print("Data validation failed. Please check the data quality issues.")
+ 
+# Run the ETL process
+etl_process()
+
+
+
+
+
+
+9. Data Normalization: 
+⦁	Write a function that normalizes the values in a DataFrame column to a range between 0 and 1. 
+
+import pandas as pd
+def normalize_column(column):
+    min_val = column.min()
+    max_val = column.max()
+    normalized_column = (column - min_val) / (max_val - min_val)
+    return normalized_column
+ 
+⦁	Write a function that standardizes the values in a DataFrame column (mean=0, standard deviation=1). 
+import pandas as pd
+def standardize_column(column):
+    standardized_column = (column - column.mean()) / column.std()
+    return standardized_column
+
+10. Advanced List Comprehensions: 
+⦁	Given a list of numbers, create a new list containing the square roots of the even numbers only, using list comprehension. 
+import math
+def square_roots_of_even_numbers(numbers):
+    square_roots = [math.sqrt(num) for num in numbers if num % 2 == 0]
+    return square_roots
+
+numbers = [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+square_roots_even = square_roots_of_even_numbers(numbers)
+print("Square roots of even numbers:", square_roots_even)
+
+⦁	Given a list of tuples representing (name, score), create a new list containing names of students who scored above the average, using list comprehension. 
+def names_above_avg(scores):
+           if not scores:
+              return []
+    	    total_score = sum(score for _, score in scores)
+    	    avg_score = total_score / len(scores)
+    	    above_avg_names = [name for name, score in scores if score > avg_score]
+    	    return above_avg_names
+ 
+student_scores = [("Alice", 80), ("Bob", 75), ("Charlie", 90), ("David", 85)]
+above_average_students = names_above_average(student_scores)
+print("Students who scored above the average:", above_average_students)
+
+11. Unit Testing: 
+⦁	Write unit tests for a function that calculates the factorial of a number. Use the unittest framework. 
+def factorial(n):
+    if n == 0:
+        return 1
+    elif n < 0:
+        raise ValueError("Factorial is not defined for negative numbers")
+    else:
+        result = 1
+        for i in range(1, n + 1):
+            result *= i
+        return result
+
+⦁	Write unit tests for a function that checks if a given string is a palindrome.
+import unittest
+
+def is_palindrome(s):
+    s = s.lower().replace(" ", "")
+    return s == s[::-1]
+
+ 
+class TestPalindrome(unittest.TestCase):
+ 
+    def test_empty_string(self):
+        self.assertTrue(is_palindrome(""))
+ 
+    def test_single_character(self):
+        self.assertTrue(is_palindrome("a"))
+ 
+    def test_simple_palindrome(self):
+        self.assertTrue(is_palindrome("madam"))
+ 
+    def test_mixed_case_palindrome(self):
+        self.assertTrue(is_palindrome("MadAm"))
+ 
+    def test_palindrome_with_spaces(self):
+        self.assertTrue(is_palindrome("A man a plan a canal Panama"))
+ 
+    def test_not_a_palindrome(self):
+        self.assertFalse(is_palindrome("hello"))
+ 
+    def test_not_a_palindrome_with_spaces(self):
+        self.assertFalse(is_palindrome("This is not a palindrome"))
+ 
+if __name__ == '__main__':
+    unittest.main()
+
+12. Decorators: 
+⦁	Create a decorator that logs the execution time of a function. Apply it to a function that sorts a large list. 
+
+import time
+from random import randint
+ 
+# Decorator to calculate the execution time of a function
+def log_execution_time(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"Function '{func.__name__}' executed in {end_time - start_time} seconds.")
+        return result
+    return wrapper
+ 
+# Function to sort a list that will be decorated
+@log_execution_time
+def sort_large_list(large_list):
+    return sorted(large_list)
+ 
+# Generate a large list of random integers
+large_list = [randint(0, 1000) for _ in range(10000)]
+ 
+# Call the decorated function
+sorted_list = sort_large_list(large_list)
+
+⦁	Create a decorator that retries a function up to 3 times if it raises an exception, with a delay between retries.
+import time 
+import functools
+ 
+def retry(max_retries=3, delay=1):
+    def decorator_retry(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            retries = 0
+            while retries < max_retries:
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    retries += 1
+                    print(f"Exception: {e}. Retrying {retries}/{max_retries}...")
+                    time.sleep(delay)
+            raise Exception(f"Failed after {max_retries} retries.")
+        return wrapper
+    return decorator_retry
+ 
+# Example usage
+@retry(max_retries=3, delay=2)
+def test_function():
+    print("Trying...")
+    raise ValueError("An error occurred")
+ 
+test_function()
+
+13. Concurrency with Threads: 
+⦁	Write a program that uses threading to calculate the sum of a large list of numbers by dividing the work among multiple threads. 
+import threading
+def sum_sublist(numbers, start, end, result, index):
+    result[index] = sum(numbers[start:end])
+ 
+def threaded_sum(numbers, num_threads):
+    length = len(numbers)
+    thread_list = []
+    result = [0] * num_threads
+    chunk_size = length // num_threads
+ 
+    for i in range(num_threads):
+        start = i * chunk_size
+        end = (i + 1) * chunk_size if i != num_threads - 1 else length
+        thread = threading.Thread(target=sum_sublist, args=(numbers, start, end, result, i))
+        thread_list.append(thread)
+        thread.start()
+ 
+    for thread in thread_list:
+        thread.join()
+ 
+    return sum(result)
+ 
+⦁	Write a program that uses threading to fetch data from multiple URLs concurrently and print the status code of each response. 
+import threading
+import requests
+ 
+urls = [
+    'https://www.example.com',
+    'https://www.google.com',
+    'https://www.github.com',
+]
+ 
+def fetch_status(url):
+    try:
+        response = requests.get(url)
+        print(f'{url}: {response.status_code}')
+    except requests.RequestException as e:
+        print(f'{url}: Failed to fetch ({e})')
+ 
+# Create a thread for each URL
+threads = []
+for url in urls:
+    thread = threading.Thread(target=fetch_status, args=(url,))
+    threads.append(thread)
+ 
+# Start all threads
+for thread in threads:
+    thread.start()
+ 
+# Wait for all threads to complete
+for thread in threads:
+    thread.join()
+
+14. Data Pipeline Simulation: 
+⦁	Simulate a data pipeline that processes a list of dictionaries, applying various transformations, and outputs the processed data as a list of dictionaries. 
+input_data = [
+    {'name': 'Alice', 'age': 25, 'city': 'New York'},
+    {'name': 'Bob', 'age': 30, 'city': 'Paris'},
+    {'name': 'Charlie', 'age': 35, 'city': 'London'}
+]
+ 
+# Define a function to simulate the data pipeline
+def data_pipeline(data):
+    # Transformation 1: Capitalize the city names
+    for entry in data:
+        entry['city'] = entry['city'].capitalize()
+    
+    # Transformation 2: Add a new key-value pair 'adult'
+    for entry in data:
+        entry['adult'] = entry['age'] >= 18
+    
+    # Transformation 3: Remove the age key-value pair
+    for entry in data:
+        del entry['age']
+    
+    return data
+ 
+# Process the input data through the pipeline
+processed_data = data_pipeline(input_data)
+ 
+print("Processed Data:")
+for item in processed_data:
+    print(item)
+
+⦁	Extend the pipeline to include an error-handling stage that logs any errors encountered during processing. 
+import logging
+ 
+# Configure logging
+logging.basicConfig(filename='pipeline_errors.log', level=logging.ERROR)
+ 
+def process_data(data):
+    try:
+        pass
+    except Exception as e:
+        logging.error(f"Error processing data: {e}")
+        raise
+ 
+def main_pipeline(data):
+    try:
+        # Stage 1: Data extraction
+        extracted_data = extract_data(data)
+        
+        # Stage 2: Data transformation
+        transformed_data = transform_data(extracted_data)
+        
+        # Stage 3: Data loading
+        load_data(transformed_data)
+        
+    except Exception as e:
+        logging.error(f"Pipeline error: {e}")
+        raise
+ 
+def extract_data(data):
+    # Extraction logic
+    return data
+ 
+def transform_data(data):
+    # Transformation logic
+    return data
+ 
+def load_data(data):
+    # Loading logic
+    pass
+ 
+if __name__ == "__main__":
+    data = "your_data_source"
+    main_pipeline(data)
+15. Configuration Management: 
+⦁	Write a Python script that reads configuration settings from a dictionary and uses them to perform a specific task. 
+import sqlite3
+config = {
+    'database': 'example.db',
+    'query': 'SELECT * FROM users'
+}
+ 
+def connect_to_database(config):
+    try:
+        conn = sqlite3.connect(config['database'])
+        print(f"Connected to database: {config['database']}")
+        return conn
+    except sqlite3.Error as e:
+        print(f"Error connecting to database: {e}")
+        return None
+ 
+def fetch_data(conn, query):
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        return rows
+    except sqlite3.Error as e:
+        print(f"Error fetching data: {e}")
+        return []
+ 
+def main(config):
+    conn = connect_to_database(config)
+    if conn:
+        data = fetch_data(conn, config['query'])
+        print("Fetched data:")
+        for row in data:
+            print(row)
+        conn.close()
+ 
+if __name__ == "__main__":
+    main(config)
+
+⦁	Write a function that validates the configuration settings, ensuring that all required fields are present and have valid values. 
+def validate_config(config, required_fields):
+    for field, validator in required_fields.items():
+        if field not in config:
+            print(f"Missing required field: {field}")
+            return False
+        if not validator(config[field]):
+            print(f"Invalid value for field: {field}")
+            return False
+    return True
+ 
+# Example usage
+config = {
+    "host": "localhost",
+    "port": 8080,
+    "debug": True
+}
+required_fields = {
+    "host": lambda x: isinstance(x, str) and len(x) > 0,
+    "port": lambda x: isinstance(x, int) and 0 <= x <= 65535,
+    "debug": lambda x: isinstance(x, bool)
+}
+is_valid = validate_config(config, required_fields)
+print(f"Configuration is valid: {is_valid}")
+
+16. Handling Large Data Sets: 
+⦁	Write a function that processes a large list of numbers in chunks and calculates the average value of the list. 
+def calculate_average_in_chunks(numbers, chunk_size):
+    total_sum = 0
+    total_count = 0
+    
+    for i in range(0, len(numbers), chunk_size):
+        chunk = numbers[i:i + chunk_size]
+        total_sum += sum(chunk)
+        total_count += len(chunk)
+    
+    if total_count == 0:
+        return 0  # To handle the case where the list is empty
+    
+    return total_sum / total_count
+ 
+# Example usage:
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+chunk_size = 3
+average = calculate_average_in_chunks(numbers, chunk_size)
+print(f"The average value is: {average}")
+
+⦁	Write a function that processes a large list of strings in chunks, counts the frequency of each string, and returns a dictionary with the results.
+from collections import defaultdict
+ 
+def count_frequencies_in_chunks(strings, chunk_size):
+    frequency_dict = defaultdict(int)
+    
+    for i in range(0, len(strings), chunk_size):
+        chunk = strings[i:i + chunk_size]
+        for string in chunk:
+            frequency_dict[string] += 1
+    
+    return dict(frequency_dict)
+ 
+# Example usage:
+large_list_of_strings = ["apple", "banana", "apple", "orange", "banana", "apple", "kiwi", "orange", "kiwi", "kiwi"]
+chunk_size = 3
+result = count_frequencies_in_chunks(large_list_of_strings, chunk_size)
+print(result)
+
+17. Class and Objects: 
+⦁	Create a class representing a bank account with methods to deposit, withdraw, and check balance. Ensure proper error handling for invalid operations.
+class BankAccount:
+    def __init__(self,acc_no,name,balance):
+        self.acc_no = acc_no
+        self.name = name
+        self.balance = balance
+
+    def deposit(self,amt):
+        if amt > 0:
+            self.balance += amt
+            return self.balance
+        else:
+            print ("Invalid deposit amount. Please enter a positive number.") 
+
+    def withdraw(self,amt):
+        if amt > 0:
+            if self.balance >= amt:
+                self.balance -= amt
+                print(f"Withdrawal of ${amount:.2f} successful.")
+            else:
+                print("Insufficient balance. Withdrawal not processed.")
+        else:
+            print("Invalid withdrawal amount. Please enter a positive number.")
+
+    def check_balance(self):
+        return self.balance
+
+
+
+⦁	Extend the bank account class to support multiple currencies, with methods to convert between currencies using a given exchange rate. 
+class BankAccount:
+    def __init__(self, account_number):
+        self.account_number = account_number
+        self.balances = {}  # Dictionary to store balances by currency
+    
+    def deposit(self, amount, currency='USD'):
+        if currency in self.balances:
+            self.balances[currency] += amount
+        else:
+            self.balances[currency] = amount
+    
+    def withdraw(self, amount, currency='USD'):
+        if currency in self.balances and self.balances[currency] >= amount:
+            self.balances[currency] -= amount
+        else:
+            print(f"Insufficient balance in {currency} account.")
+    
+    def check_balance(self, currency='USD'):
+        if currency in self.balances:
+            return self.balances[currency]
+        else:
+            return 0
+    
+    def convert_to(self, amount, from_currency, to_currency, exchange_rate):
+        if from_currency in self.balances and self.balances[from_currency] >= amount:
+            converted_amount = amount * exchange_rate
+            
+            # Deposit converted amount into `to_currency`
+            self.deposit(converted_amount, to_currency)
+            
+            # Withdraw original amount from `from_currency`
+            self.withdraw(amount, from_currency)
+            
+            return converted_amount
+        else:
+            print(f"Insufficient balance in {from_currency} account or invalid conversion.")
+
+
+
+
+
+18. Regular Expressions: 
+⦁	Write a function that validates email addresses using regular expressions. 
+import re
+def validate_email(email):
+    pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    regex = re.compile(pattern)
+    if regex.match(email):
+        return True
+    else:
+        return False
+ 
+⦁	Write a function that extracts all the dates from a given text string in the format (DD-MM-YYYY).  
+import re
+def extract_dates(text):
+    date_pattern = r'\b(\d{2}-\d{2}-\d{4})\b'
+    dates = re.findall(date_pattern, text)
+    return dates
+
+19. Data Encryption: 
+⦁	Write a Python script that encrypts and decrypts text using the Fernet symmetric encryption from the cryptography library. 
+from cryptography.fernet import Fernet
+ 
+key = Fernet.generate_key()
+cipher_suite = Fernet(key)
+ 
+# Function to encrypt text
+def encrypt_text(plain_text):
+    encrypted_text = cipher_suite.encrypt(plain_text.encode())
+    return encrypted_text
+ 
+# Function to decrypt text
+def decrypt_text(encrypted_text):
+    decrypted_text = cipher_suite.decrypt(encrypted_text).decode()
+    return decrypted_text
+ 
+# Example usage
+if __name__ == "__main__":
+    text_to_encrypt = "Hello, this is a secret message!"
+    print(f"Original text: {text_to_encrypt}")
+ 
+    encrypted = encrypt_text(text_to_encrypt)
+    print(f"Encrypted text: {encrypted}")
+ 
+    decrypted = decrypt_text(encrypted)
+    print(f"Decrypted text: {decrypted}")
+⦁	Write a function that encrypts and decrypts a dictionary of sensitive data, preserving the structure of the dictionary. 
+from cryptography.fernet import Fernet
+import json
+ 
+key = Fernet.generate_key()
+cipher_suite = Fernet(key)
+ 
+def encrypt_dict(data):
+    json_data = json.dumps(data)
+    encrypted_data = cipher_suite.encrypt(json_data.encode())
+    return encrypted_data
+ 
+def decrypt_dict(encrypted_data):
+    decrypted_data = cipher_suite.decrypt(encrypted_data).decode()
+    return json.loads(decrypted_data)
+ 
+# Example usage
+sensitive_data = {
+    'name': 'John Doe',
+    'email': 'john.doe@example.com',
+    'phone': '123-456-7890'
+}
+encrypted_data = encrypt_dict(sensitive_data)
+print(f"Encrypted: {encrypted_data}")
+decrypted_data = decrypt_dict(encrypted_data)
+print(f"Decrypted: {decrypted_data}")
+
+20. Memory Management: 
+⦁	Write a program to monitor memory usage of a Python script and log it to the console at regular intervals. 
+import psutil
+import time
+import os
+ 
+def log_memory_usage(interval=5):
+    pid = os.getpid()
+    process = psutil.Process(pid)
+    
+    while True:
+        memory_info = process.memory_info()
+        print(f"Memory Usage: {memory_info.rss / (1024 * 1024):.2f} MB")
+        time.sleep(interval)
+ 
+if __name__ == "__main__":
+    log_memory_usage()
+
+⦁	Write a function that generates a large list of random numbers and uses memory profiling to identify any memory leaks. 
+import random
+from memory_profiler import profile
+ 
+@profile
+def generate_random_numbers(size):
+    random_numbers = [random.randint(0, 1000000) for _ in range(size)]
+    return random_numbers
+ 
+if __name__ == "__main__":
+    size = 1000000  # Adjust the size as needed
+    random_numbers = generate_random_numbers(size)
+
+21. Parallel Processing: 
+⦁	Use the multiprocessing module to parallelize a CPU-bound task, such as calculating the prime numbers in a given range. 
+import multiprocessing
+import math
+ 
+def is_prime(n):
+    if n <= 1:
+        return False
+    if n <= 3:
+        return True
+    for i in range(2,n//2):
+        if n%i == 0:
+            return False  
+    return False
+ 
+def find_primes_in_range(start, end):
+    primes = []
+    for num in range(start, end):
+        if is_prime(num):
+            primes.append(num)
+    return primes
+ 
+def parallel_prime_finder(start, end, num_processes):
+    range_size = (end - start) // num_processes
+    ranges = [(start + i * range_size, start + (i + 1) * range_size) for i in range(num_processes)]
+    ranges[-1] = (ranges[-1][0], end)  # Ensure the last range goes up to 'end'
+ 
+    with multiprocessing.Pool(processes=num_processes) as pool:
+        results = pool.starmap(find_primes_in_range, ranges)
+ 
+    primes = [prime for sublist in results for prime in sublist]
+    return primes
+ 
+if __name__ == "__main__":
+    start = 1
+    end = 100000
+    num_processes = 4
+    primes = parallel_prime_finder(start, end, num_processes)
+    print(f"Primes in range {start} to {end}: {primes}")
+
+⦁	Write a program that uses the multiprocessing module to perform matrix multiplication in parallel.
+import multiprocessing
+import numpy as np
+ 
+def matrix_multiply_worker(A, B, result, row):
+    for j in range(len(B[0])):
+        result[row][j] = sum(A[row][k] * B[k][j] for k in range(len(B)))
+ 
+def parallel_matrix_multiply(A, B):
+    num_rows = len(A)
+    result = np.zeros((num_rows, len(B[0])))
+    processes = []
+    for i in range(num_rows):
+        p = multiprocessing.Process(target=matrix_multiply_worker, args=(A, B, result, i))
+        processes.append(p)
+        p.start()
+    
+    for p in processes:
+        p.join()
+    
+    return result
+ 
+if __name__ == "__main__":
+    A = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    B = np.array([[9, 8, 7], [6, 5, 4], [3, 2, 1]])
+    
+    result = parallel_matrix_multiply(A, B)
+    print("Result of matrix multiplication:")
+    print(result)
+
+
+
+
+
+
+
+22. Error Handling: 
+⦁	Write a function that raises and handles custom exceptions to manage specific error cases in a given task. 
+
+class TaskError(Exception):
+    pass
+class TaskInputError(TaskError):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+class TaskExecutionError(TaskError):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+def perform_task(task_input):
+    try:
+        if not isinstance(task_input, int):
+            raise TaskInputError("Task input must be an integer.")
+        if task_input < 0:
+            raise TaskExecutionError("Task execution failed: negative input.")
+        print(f"Task performed with input: {task_input}")
+    except TaskInputError as e:
+        print(f"Error in task input: {e.message}")
+    except TaskExecutionError as e:
+        print(f"Error in task execution: {e.message}")
+    except Exception as e:
+        print(f"Unexpected error occurred: {str(e)}")
+
+perform_task(5)     
+perform_task(-2)    
+perform_task("abc")
+
+23. Recursion: 
+⦁	Write a recursive function to calculate the nth Fibonacci number. 
+def fibonacci(n):
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+n = 10
+result = fibonacci(n)
+print(f"The {n}th Fibonacci number is: {result}")
+⦁	Write a recursive function to solve the Tower of Hanoi problem.
+ 
+def tower_of_hanoi(n, source, target, temp):
+    if n == 1:
+        print(f"Move disk 1 from {source} to {target}")
+        return
+    else:
+        tower_of_hanoi(n-1, source, temp, target)
+        print(f"Move disk {n} from {source} to {target}")
+        tower_of_hanoi(n-1, temp, target, source)
+
+n = 3
+tower_of_hanoi(n, 'A', 'C', 'B')
+
+24. Data Merging: 
+⦁	Given two lists of dictionaries, write a function to merge them based on a common key. 
+def merge_lists_of_dicts(list1, list2, common_key):
+    merged_list = []
+    dict2 = {item[common_key]: item for item in list2}
+
+
+    for item1 in list1:
+        key = item1[common_key]
+        if key in dict2:
+            merged_item = {**item1, **dict2[key]}  # Merge dictionaries
+            merged_list.append(merged_item)
+
+        else:
+            merged_list.append(item1) 
+    
+    for item2 in list2:
+        key = item2[common_key]
+        if key not in dict1:
+            merged_list.append(item2)
+    
+    return merged_list
+
+# Example usage:
+list1 = [
+    {'id': 1, 'name': 'Alice', 'age': 25},
+    {'id': 2, 'name': 'Bob', 'age': 30},
+    {'id': 3, 'name': 'Charlie', 'age': 35}
+]
+list2 = [
+    {'id': 2, 'city': 'New York'},
+    {'id': 3, 'city': 'Los Angeles'},
+    {'id': 4, 'city': 'Chicago'}
+]
+merged_list = merge_lists_of_dicts(list1, list2, 'id')
+print("Merged List:")
+print(merged_list)
+⦁	Write a function that merges multiple DataFrames based on a common key and handles conflicts by keeping the most recent data. 
+
+import pandas as pd
+ 
+def merge_dataframes(dfs, key, timestamp_col):
+    # Concatenate all DataFrames
+    combined_df = pd.concat(dfs)
+    
+
+    # Sort by key and timestamp
+    combined_df.sort_values(by=[key, timestamp_col], ascending=[True, False], inplace=True)
+    
+    # Drop duplicates, keeping the most recent entry
+    merged_df = combined_df.drop_duplicates(subset=[key], keep='first')
+    
+    return merged_df
+
+25. Statistical Analysis: 
+⦁	Write a function that calculates the mean, median, and mode of a list of numbers.
+import statistics 
+def calculate_statistics(numbers):
+    n = len(numbers)
+    mean = sum(numbers) / n
+    median = statistics.median(numbers)
+    mode = statistics.mode(numbers)
+    return mean, median, mode
+numbers = [1,2,3,4,5]
+mean, median, mode = calculate_statistics(numbers)
+print(f'List: {numbers}')
+print(f'Mean: {mean}')
+print(f'Median: {median}')
+print(f'Mode: {mode}')
+
+⦁	Write a function that calculates the standard deviation and variance of a list of numbers.
+import math
+def calculate_statistics(numbers):
+    n = len(numbers)
+    mean = sum(numbers) / n
+    variance = sum((x - mean) ** 2 for x in numbers) / n
+    std_deviation = math.sqrt(variance)
+    return variance, std_deviation
+
+numbers = [1,2,3,4,5]
+variance, std_deviation = calculate_statistics(numbers)
+print(f'List: {numbers}')
+print(f'Variance: {variance}')
+print(f'Standard Deviation: {std_deviation}')
