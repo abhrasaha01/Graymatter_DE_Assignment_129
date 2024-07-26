@@ -1,0 +1,133 @@
+1. Number Categorizer 
+Write a Python program that prompts the user to enter a number between 1 and 100. 
+If the number is less than 50, print "The number is small." 
+If the number is between 50 and 75 (inclusive), print "The number is medium." 
+If the number is greater than 75, print "The number is large." 
+If the input is not a valid number or not in the range 1 to 100, print "Invalid input." 
+After printing the message, ask the user if they want to input another number. If yes, repeat the process; if no, end the program with a message "Thank you for using the program." 
+Ensure that the program continues to prompt for new numbers until the user decides to stop. 
+while (1):
+    n = int(input('Enter a number: '))
+    if n < 1 or n > 100:
+        print('Invalid Input')
+    elif n < 50:
+        print('Number is small')
+    elif n >= 50 and n <= 75:
+        print('Number is medium')
+    elif n > 75:
+        print('Number is large')
+    
+    x = int(input('want to input another number? 0/1'))
+    if x == 0:
+        exit(0)
+    
+
+2. Even or Odd Checker 
+Write a program that asks the user to enter a number. 
+Check if the number is even or odd. 
+Print "The number is even" if the number is even, otherwise print "The number is odd." 
+n = int(input('Enter a number: '))
+if n%2 == 0:
+print('The number is Even')
+else:
+print('The number is Odd')
+
+
+
+3. Simple Calculator 
+Write a program that performs basic arithmetic operations (addition, subtraction, multiplication, and division). 
+Prompt the user to enter two numbers and choose an operation (+, -, *, /). 
+Perform the chosen operation and display the result. 
+Handle division by zero errors with a suitable message. 
+n1 = int(input('Enter number1: ')) 
+n2 = int(input('Enter number2: ')) 
+op = input('Enter operator: ')
+if op == '+':
+    print(n1+n2)
+elif op == '-':
+    print(n1-n2)
+elif op == '*':
+    print(n1*n2)
+elif op == '/':
+    if n2 == 0:
+        print("division by zero error!")
+    else:
+        print(n1/n2)
+        
+else:
+    print("invalid operator")
+
+
+4. Number Guessing Game 
+Write a program that randomly selects a number between 1 and 10. 
+Prompt the user to guess the number. 
+Provide feedback if the guess is too high or too low. 
+Allow the user to guess again until they find the correct number. 
+Print a congratulatory message when the correct number is guessed. 
+
+from random import randint
+num = randint(1,10)
+ 
+guess = 0
+while guess != num:
+    guess = int(input("Enter a guess: "))
+    if guess > num:
+        print("Too High")
+    elif guess < num:
+        print("Too Low")
+        
+print("Congratulations! You guessed it correct")
+
+
+5. Multiplication Table 
+Write a program that prompts the user to enter a number. 
+Generate and display the multiplication table for that number (from 1 to 10). 
+n = int(input("Enter a number: "))
+print(f"the table of {n} is: ")
+for i in range(1,11):
+    print(i*n)
+
+
+6. Factorial Calculator 
+Write a program that prompts the user to enter a non-negative integer. 
+Calculate the factorial of the number (n!) using a loop. 
+Display the result. 
+
+n = int(input("Enter a number: "))
+fact = 1
+for i in range(1,n+1):
+    fact *= i
+print(f"the factorial of {n} is:", fact)
+
+
+7. Palindrome Checker 
+Write a program that prompts the user to enter a word or phrase. 
+Check if the entered text is a palindrome (reads the same forwards and backwards). 
+Print "The text is a palindrome" or "The text is not a palindrome" based on the result. 
+
+string = input("Enter a phrase: ")
+n = len(string)
+for i in range(n//2):
+    if string[i] != string[n-i-1]:
+        print("Text is NOT a Palindrome")
+        exit(0)
+print("Text is a Palindrome")
+
+
+
+8. List Sum Calculator 
+Write a program that initializes a list of numbers. 
+Calculate and print the sum of all numbers in the list. 
+Prompt the user to enter a number to add to the list. 
+Update the list and print the new sum
+nums = [4,3,5]
+total = 0
+for i in nums:
+    total += i
+print("Current list is:",nums)
+print("Current sum is:",total)
+
+new = int(input("Enter a new number: "))
+nums.append(new)
+total += new
+print("New sum =",total)
